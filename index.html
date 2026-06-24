@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SF 3BR Apartment Scan — Card View</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1d24; --card2:#20242d; --ink:#e8eaed; --muted:#9aa0aa;
+    --line:#2c313b; --green:#3fb950; --greenbg:#10331a; --amber:#d29922; --amberbg:#3a2e0c;
+    --blue:#4493f8; --new:#f78166; --newbg:#3d1d14;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:28px 18px;}
+  .wrap{max-width:1100px;margin:0 auto;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 12px;}
+  .banner{background:var(--amberbg);border:1px solid var(--amber);color:#f0d99a;border-radius:10px;padding:11px 14px;font-size:13px;margin:0 0 20px;line-height:1.45;}
+  .banner b{color:#fff;}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:22px;font-size:12.5px;}
+  .legend .item{display:flex;align-items:center;gap:7px;color:var(--muted);}
+  .key{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+  .req{background:var(--card2);border:1px solid var(--line);color:var(--ink);}
+  .nh-yes{background:var(--greenbg);border:1px solid var(--green);color:var(--green);}
+  .nh-no{background:transparent;border:1px dashed var(--line);color:var(--muted);}
+  .newkey{background:var(--newbg);border:1px solid var(--new);color:var(--new);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;}
+  .card{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.45);border-color:#46506a;}
+  .card.new{border-color:var(--new);box-shadow:0 0 0 1px var(--new) inset;}
+  .ribbon{position:absolute;top:12px;right:12px;z-index:5;background:var(--newbg);color:var(--new);border:1px solid var(--new);font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:20px;}
+
+  /* carousel */
+  .carousel{position:relative;width:100%;aspect-ratio:4/3;background:#0a0c10;overflow:hidden;}
+  .carousel a.slidewrap{display:block;width:100%;height:100%;}
+  .carousel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .25s ease;}
+  .carousel img.active{opacity:1;}
+  .nophoto{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:var(--muted);font-size:13px;background:repeating-linear-gradient(45deg,#15181f,#15181f 12px,#191d25 12px,#191d25 24px);}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:30px;height:30px;border:none;border-radius:50%;background:rgba(10,12,16,.6);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+  .arrow:hover{background:rgba(10,12,16,.85);}
+  .arrow.prev{left:8px;} .arrow.next{right:8px;}
+  .counter{position:absolute;bottom:8px;right:8px;z-index:4;background:rgba(10,12,16,.65);color:#fff;font-size:11px;padding:2px 8px;border-radius:20px;}
+
+  .body{padding:14px 16px 14px;display:flex;flex-direction:column;flex:1;}
+  .rank{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.05em;margin-bottom:6px;}
+  .hood{font-size:12.5px;color:var(--blue);font-weight:600;margin-bottom:2px;}
+  .title{font-size:14.5px;font-weight:600;line-height:1.3;margin:0 0 10px;}
+  .price{font-size:26px;font-weight:700;margin:0 0 2px;}
+  .spec{font-size:12.5px;color:var(--muted);margin-bottom:12px;}
+  .row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;}
+  .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);width:100%;margin-bottom:1px;}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:20px;font-size:11.5px;font-weight:600;}
+  .b-req{background:var(--card2);border:1px solid var(--line);color:var(--ink);}
+  .b-yes{background:var(--greenbg);border:1px solid var(--green);color:var(--green);}
+  .b-no{background:transparent;border:1px dashed var(--line);color:var(--muted);}
+  .foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);}
+  .open{color:var(--amber);font-weight:600;}
+  .cta{color:var(--blue);font-weight:600;text-decoration:none;}
+  .cta:hover{text-decoration:underline;}
+  .note{color:var(--muted);font-size:12px;margin-top:24px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>San Francisco 3BR Scan — June 23, 2026</h1>
+  <p class="sub">7 verified listings · swipe the photos · click "View listing" to open the Craigslist post</p>
+  <div class="banner">📂 <b>Open this file in a web browser</b> (double-click it in your Apartment Hunt folder) to see the photos and click through to listings. The in-app preview blocks external images and links.</div>
+
+  <div class="legend">
+    <div class="item"><span class="key newkey">● NEW</span> posted in the past day</div>
+    <div class="item"><span class="key req">3BR ·  ≤$9k</span> requirements (all cards meet these)</div>
+    <div class="item"><span class="key nh-yes">✓ parking</span> nice-to-have met</div>
+    <div class="item"><span class="key nh-no">parking</span> nice-to-have not met</div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="note">Listings change frequently — prices, photos, and availability as of the scan above.</p>
+</div>
+
+<script>
+const IMG = id => `https://images.craigslist.org/${id}_600x450.jpg`;
+
+const listings = [
+  {rank:"BEST FIT", hood:"Noe Valley", title:"3BR/2BA Victorian — 279 30th St (at Church)", price:"$7,500", spec:"3BR / 2BA · 1,600 sqft · house, deck & yard", isNew:true,
+   central:true, parking:"Off-street parking", parkingYes:true, laundry:"W/D in unit", laundryYes:true,
+   url:"https://sfbay.craigslist.org/sfc/apa/d/san-francisco-3br-2ba2pkghome/7942080842.html",
+   imgs:["01616_8BZOxDBgNZk_07K0ak","01111_c1jwWwZ7noe_0t20CI","00z0z_4DgVVm3z25Z_0CI0t2","00l0l_a7WzGYbaEIg_0CI0t2","00000_ZmUOLMRoyo_0CI0t2","00o0o_leoqIXHADa7_0CI0t2","00V0V_e2Nu2kSZ6HF_0CI0t2"]},
+
+  {rank:"#2", hood:"San Francisco", title:"\"Classic 4-unit boutique building\"", price:"$7,995", spec:"3BR / 2.5BA · 1,500 sqft · neighborhood not stated", isNew:false,
+   central:null, parking:"Carport", parkingYes:true, laundry:"W/D in unit", laundryYes:true,
+   url:"https://sfbay.craigslist.org/sfc/apa/d/san-francisco-25-classic-unit-boutique/7941496789.html",
+   imgs:["00N0N_cjgiWGdCqqZ_0jm0aS","00T0T_wL61wkisKX_0jm0cU","00U0U_fvx85qtx3PK_0jm0cU","00909_lpKN1mRxZUz_0jm0cU","00B0B_4bE0qM3sAVn_0jm0cU","00P0P_jExAwWdaIIM_0lG0es"]},
+
+  {rank:"#3", hood:"Outer Richmond", title:"Remodeled top-floor flat — 35th Ave near Geary", price:"$6,200", spec:"3BR / 2.5BA · 1,750 sqft · yard · avail 6/8", isNew:false,
+   central:false, parking:"Attached garage", parkingYes:true, laundry:"Laundry in building", laundryYes:false,
+   url:"https://sfbay.craigslist.org/sfc/apa/d/san-francisco-remod-3bd-25ba-1750sqft/7938441904.html",
+   imgs:[]},
+
+  {rank:"#4", hood:"Mission / Dolores Park", title:"Remodeled flat — 394 Dolores St", price:"$6,500", spec:"3BR / 1.5BA · one block from Dolores Park", isNew:false, recent:true,
+   central:true, parking:"Street parking only", parkingYes:false, laundry:"W/D in unit", laundryYes:true,
+   url:"https://sfbay.craigslist.org/sfc/apa/d/san-francisco-bedroom-flat-one-block/7941859283.html",
+   imgs:["00q0q_iy1mOwTQAJV_0t20CI","00q0q_1DJTc8g61E3_0t20CI","00r0r_j4HmkgfNGjy_0t20CI","00M0M_bMy1WGiLkp4_0t20CI","00L0L_1qRBgxA08kO_0t20CI","00t0t_4GtnD10w1mS_0t20CI"]},
+
+  {rank:"#5", hood:"Castro / Upper Market", title:"Top-floor flat — 270 Eureka St", price:"$6,995", spec:"3BR / 1BA · shared yard · cats ok", isNew:false,
+   central:true, parking:"Street parking only", parkingYes:false, laundry:"W/D in unit", laundryYes:true,
+   url:"https://sfbay.craigslist.org/sfc/apa/d/san-francisco-new-top-floor-flat-in/7941372988.html",
+   imgs:["00p0p_asYinSuxPOH_0t20jm","01212_5aM0fsFPvWB_0t20jm","00y0y_c8iV2xrsqQ8_0t20jm","00505_5iP6LhsGFdf_0t20jm","00C0C_echN8HtzhmP_0t20jm","01414_dZQ5yEy5cX3_0t20jm"]},
+
+  {rank:"#6", hood:"Hayes Valley", title:"Beautifully remodeled — 944 Hayes St", price:"$8,995", spec:"3BR / 2BA · pets ok · top of budget", isNew:true,
+   central:true, parking:"No parking", parkingYes:false, laundry:"W/D in unit", laundryYes:true,
+   url:"https://sfbay.craigslist.org/sfc/apa/d/san-francisco-beautifully-remodeled-3br/7941425832.html",
+   imgs:["00101_jwIKDYk9FXG_0CI0lM","00X0X_4o72REMFWXr_0CI0lM","00F0F_6zAS2okRSjM_0CI0lM","00I0I_er0VObuOrof_0CI0lM","00x0x_4aLUsqmv7YI_0CI0lM","00W0W_9QofaRufFpf_0CI0lM"]},
+
+  {rank:"BUDGET PICK", hood:"Lower Nob Hill", title:"Elevator building — 660 Bush St #402", price:"$5,400", spec:"3BR / 1BA · elevator", isNew:true, openHouse:"Open house tonight 7:40pm",
+   central:true, parking:"No parking", parkingYes:false, laundry:"Laundry in building", laundryYes:false,
+   url:"https://sfbay.craigslist.org/sfc/apa/d/san-francisco-open-tue-740pm-800pm/7942831736.html",
+   imgs:["01010_jEsQShWDalw_0qs0eU","00h0h_9LuVqY6cqtP_0gw0b1","00E0E_6zu3v8MXKEI_0gw0b1","00t0t_gOSPJJ8Kfoq_0gw0b1","00707_lsNgHlsbS4s_0gw0b1","00D0D_jjaWO6Yj02F_0gw0b1"]},
+];
+
+function nh(yes, val){
+  if(yes===null) return `<span class="badge b-no">? ${val}</span>`;
+  return `<span class="badge ${yes?'b-yes':'b-no'}">${yes?'✓':'✗'} ${val}</span>`;
+}
+
+function carousel(l, idx){
+  if(!l.imgs.length){
+    return `<div class="carousel"><a class="slidewrap" href="${l.url}" target="_blank" rel="noopener"><div class="nophoto">No photos in this listing</div></a></div>`;
+  }
+  const slides = l.imgs.map((id,i)=>`<img class="${i===0?'active':''}" loading="lazy" src="${IMG(id)}" alt="">`).join('');
+  return `<div class="carousel" data-card="${idx}" data-n="${l.imgs.length}">
+    <a class="slidewrap" href="${l.url}" target="_blank" rel="noopener">${slides}</a>
+    <button class="arrow prev" data-dir="-1" aria-label="Previous photo">‹</button>
+    <button class="arrow next" data-dir="1" aria-label="Next photo">›</button>
+    <span class="counter"><span class="cur">1</span>/${l.imgs.length}</span>
+  </div>`;
+}
+
+document.getElementById('grid').innerHTML = listings.map((l,idx)=>{
+  const centralVal = l.central===null ? "Location unconfirmed" : (l.central ? "Central / main area" : "Outer neighborhood");
+  const ribbon = l.isNew ? '<span class="ribbon">● NEW TODAY</span>'
+    : (l.recent ? '<span class="ribbon" style="background:#2a2410;border-color:var(--amber);color:var(--amber)">YESTERDAY</span>' : '');
+  return `<div class="card ${l.isNew?'new':''}">
+    ${ribbon}
+    ${carousel(l, idx)}
+    <div class="body">
+      <div class="rank">${l.rank}</div>
+      <div class="hood">${l.hood}</div>
+      <div class="title">${l.title}</div>
+      <div class="price">${l.price}</div>
+      <div class="spec">${l.spec}</div>
+      <div class="row"><span class="lbl">Requirements ✓</span>
+        <span class="badge b-req">3 bedrooms</span>
+        <span class="badge b-req">Under $9k</span>
+      </div>
+      <div class="row"><span class="lbl">Nice-to-haves</span>
+        ${nh(l.central, centralVal)}
+        ${nh(l.parkingYes, l.parking)}
+        ${nh(l.laundryYes, l.laundry)}
+      </div>
+      <div class="foot">
+        ${l.openHouse?`<span class="open">${l.openHouse}</span>`:'<span></span>'}
+        <a class="cta" href="${l.url}" target="_blank" rel="noopener">View listing →</a>
+      </div>
+    </div>
+  </div>`;
+}).join('');
+
+// carousel controls
+const state = {};
+document.querySelectorAll('.arrow').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    e.preventDefault(); e.stopPropagation();
+    const car = btn.closest('.carousel');
+    const id = car.dataset.card, n = +car.dataset.n;
+    state[id] = ((state[id]||0) + (+btn.dataset.dir) + n) % n;
+    const imgs = car.querySelectorAll('img');
+    imgs.forEach((im,i)=>im.classList.toggle('active', i===state[id]));
+    car.querySelector('.cur').textContent = state[id]+1;
+  });
+});
+</script>
+</body>
+</html>
